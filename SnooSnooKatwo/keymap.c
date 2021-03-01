@@ -126,6 +126,7 @@ const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
             {169,120,255} },
 };
 
+// Stuff for controlling the LED fading animation
 int sign = -1;
 const int BRIGHTNESS_STEPS = 500;
 const int MIN_BRIGHTNESS = BRIGHTNESS_STEPS / 10;
