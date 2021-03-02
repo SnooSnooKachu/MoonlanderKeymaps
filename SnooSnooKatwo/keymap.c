@@ -193,14 +193,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   currentBrightness = BRIGHTNESS_STEPS;
   
   #ifdef AUDIO_ENABLE
-    if (keycode == KC_CAPSLOCK && record->event.pressed)
-    {
-      if (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK)) {
-        PLAY_SONG(capsLockOffSong);
-      } else {
-        PLAY_SONG(capsLockOnSong);
-      }
-    }
+    // Too annoying when writing SQL. Maybe only enable for gaming profile or add button combo for toggling sounds.
+    // if (keycode == KC_CAPSLOCK && record->event.pressed)
+    // {
+    //   if (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK)) {
+    //     PLAY_SONG(capsLockOffSong);
+    //   } else {
+    //     PLAY_SONG(capsLockOnSong);
+    //   }
+    // }
   #endif
 
   switch (keycode) {
