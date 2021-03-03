@@ -130,6 +130,7 @@ const uint8_t PROGMEM ledmap[][DRIVER_LED_TOTAL][3] = {
 int sign = -1;
 const int BRIGHTNESS_STEPS = 500;
 const int MIN_BRIGHTNESS = BRIGHTNESS_STEPS / 10;
+const int KEYPRESS_INCREMENT = 20;
 int currentBrightness = BRIGHTNESS_STEPS;
 
 #ifdef AUDIO_ENABLE
@@ -150,8 +151,22 @@ void set_layer_color(int layer) {
       // Set caps lock button to bright color when caps lock is enabled.
       rgb_matrix_set_color(i, 255, 0, 90);
     } else {
-        float factor = currentBrightness / (float)BRIGHTNESS_STEPS;
-        rgb_matrix_set_color( i, ((int)rgb.r * factor), ((int)rgb.g * factor), ((int)rgb.b * factor) );
+      // float factor = currentBrightness / (float)BRIGHTNESS_STEPS;
+      // rgb_matrix_set_color( i, ((int)rgb.r * factor), ((int)rgb.g * factor), ((int)rgb.b * factor) );
+      float redFactor = currentBrightness / (float)BRIGHTNESS_STEPS;
+      float otherFactor = (BRIGHTNESS_STEPS - currentBrightness) / (float)BRIGHTNESS_STEPS;
+      int red = (255 - rgb.r) * redFactor + rgb.r;
+      int green = otherFactor > 0 ? (rgb.g * otherFactor) : 0;
+      int blue = otherFactor > 0 ? (rgb.b * otherFactor) : 0;
+
+      if (otherFactor < 0)
+      {
+        red = 255;
+        green = 0;
+        blue = 0;
+      }
+
+      rgb_matrix_set_color( i, (int)red, (int)green, (int)blue );
     }
   }
 }
@@ -165,7 +180,7 @@ void rgb_matrix_indicators_user(void) {
   // }
   
   // Fade the brightness down to the min brightness
-  if (currentBrightness > MIN_BRIGHTNESS)
+  if (currentBrightness > 0)
   {
     currentBrightness--;
   }
@@ -189,8 +204,12 @@ void rgb_matrix_indicators_user(void) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  // Go to full brightness on key press
-  currentBrightness = BRIGHTNESS_STEPS;
+  // // Go to full brightness on key press
+  // currentBrightness = BRIGHTNESS_STEPS;
+
+  if (currentBrightness < BRIGHTNESS_STEPS) {
+    currentBrightness += KEYPRESS_INCREMENT;
+  }
   
   #ifdef AUDIO_ENABLE
     // Too annoying when writing SQL. Maybe only enable for gaming profile or add button combo for toggling sounds.
